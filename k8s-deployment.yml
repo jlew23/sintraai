@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-executive-team
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-executive-team
+  template:
+    metadata:
+      labels:
+        app: ai-executive-team
+    spec:
+      containers:
+      - name: ai-executive-team
+        image: your-registry/ai-executive-team:latest
+        envFrom:
+        - secretRef:
+            name: ai-executive-team-secrets
+        volumeMounts:
+        - name: brain-data
+          mountPath: /app/brain_data
+        - name: company-data
+          mountPath: /app/data
+      volumes:
+      - name: brain-data
+        persistentVolumeClaim:
+          claimName: brain-data-pvc
+      - name: company-data
+        persistentVolumeClaim:
+          claimName: company-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-executive-team
+spec:
+  selector:
+    app: ai-executive-team
+  ports:
+  - port: 80
+    targetPort: 8080

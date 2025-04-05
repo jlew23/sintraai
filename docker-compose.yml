@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    env_file: .env
+    volumes:
+      - ./brain_data:/app/brain_data
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  rasa:
+    image: rasa/rasa:3.6.6
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./rasa:/app
+    command: run --enable-api --cors "*"
